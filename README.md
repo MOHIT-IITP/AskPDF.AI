@@ -1,126 +1,170 @@
-# Welcome to AskPdf.ai
-- You can give any pdf and ask what ever question you want to ask to it from the Pdf.
-This is a full-stack application that allows users to upload a PDF, generate a vector store from it, and then ask any question related to the content. It uses FastAPI for the backend, ReactJS for the frontend, LangChain for document parsing and LLM interactions, and an offline Ollama model for inference.
+# AskPdf.Ai
+### *Revolutionizing PDF Interaction with LLaMA 3.2 and LangChain*
 
-🚀 Features
-📄 Upload any PDF document
+This application allows users to upload PDF files, extract text from them, and ask questions about their content. The backend processes the uploaded PDF files, handles text extraction, chunking, and question answering using **offline large language models (LLMs)** via **Ollama**. The frontend provides a responsive and interactive UI for seamless querying.
 
-🧬 Automatically generate a vector store
+---
 
-❓ Ask natural language questions based on the PDF
+## 🧱 Architecture Overview
 
-🛡️ Runs completely offline using Ollama LLM
+### 🔧 Backend Architecture
 
-⚡ FastAPI + LangChain backend
+The backend is built with **FastAPI (Python 3.10)** and manages all document processing and question answering operations.
 
-🌐 Modern ReactJS frontend
+#### Key Backend Components
 
-🛠️ Tech Stack
-Backend: FastAPI, LangChain
+##### `main.py` (FastAPI Application)
+**Role:** Main entry point for the backend service  
+**Responsibilities:**
+- Initializes and configures the FastAPI app
+- Sets up CORS for secure frontend-backend interaction
+- Defines API endpoints:
+  - `/upload_pdf`
+  - `/create_vector_store`
+  - `/ask_question`
+- Stores active PDF processing sessions
 
-Frontend: ReactJS
+##### `pdf_processor.py` (PDF Processor)
+**Role:** Handles all PDF processing logic  
+**Responsibilities:**
+- **Text Extraction:** Uses `PyMuPDF (fitz)` to extract text
+- **Chunking:** Splits text into manageable chunks
+- **Vectorization:** Embeds chunks and stores them in **FAISS**
+- **Question Answering:** Uses **LangChain** + **Ollama** to generate answers
 
-LLM: Ollama (offline model) 
+---
 
-Vector Store: (e.g. FAISS, Chroma – update if needed)
+### 📡 Backend Interaction Flow
 
-PDF Parsing: LangChain Document Loaders
+#### 📤 PDF Upload Flow:
+User → /upload_pdf → Extract Text → Chunk → Embed → Store in FAISS → Response
 
-📂 Project Structure
-graphql
+shell
 Copy
 Edit
-.
-├── backend/
-│   ├── main.py               # FastAPI app with API routes            
-│   └── ...
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx           
-│   │   └── ...
-│   └── ...
-├── README.md
-└── requirements.txt
-📦 API Endpoints
-1. /upload_pdf
-Method: POST
 
-Description: Upload a PDF file to the backend.
+#### ❓ Question Answer Flow:
+User → /ask_question → Vector Search (FAISS) → Context to LLM (Ollama) → Answer → Response
 
-Body: multipart/form-data
-
-Returns: File upload confirmation.
-
-2. /create_vector_store
-Method: POST
-
-Description: Processes the uploaded PDF and creates a vector store using LangChain.
-
-Returns: Success message when the vector store is ready.
-
-3. /ask_question
-Method: POST
-
-Description: Ask a natural language question about the uploaded PDF.
-
-
-💡 How It Works (Frontend Behavior)
-Upload PDF First:
-The user must first upload a PDF file using the upload form.
-
-Wait for Processing:
-Since the app uses an offline Ollama model, it takes a few seconds to process the file and generate the vector store. A loading indicator or message can be shown during this time.
-
-Then Ask Questions:
-Once the vector store is ready, the question input section will automatically appear. The user can then enter natural language questions and get answers based on the content of the uploaded PDF.
-
-⚙️ Setup Instructions
-Backend (FastAPI + LangChain + Ollama)
-Clone the repo:
-
-bash
+markdown
 Copy
 Edit
-git clone https://github.com/MOHIT-IITP/AskPDF.AI.git
+
+---
+
+## 💻 Frontend Architecture
+
+The frontend is built using **React (Vite + Material UI)** and handles user interaction, API communication, and display.
+
+#### Key Frontend Components
+
+##### `App.jsx` (Root App Component)
+**Role:** Container for the entire application  
+**Responsibilities:**
+- Manages global state (upload status, questions, answers)
+- Organizes layout and routing
+
+##### `FileUpload.jsx`
+**Role:** Handles PDF upload interaction  
+**Responsibilities:**
+- Allows users to choose and upload a PDF
+- Sends PDF to backend `/upload_pdf`
+- Waits for vector store creation via `/create_vector_store`
+- Displays upload status
+
+##### `QuestionSection.jsx`
+**Role:** Q&A interface for user interaction  
+**Responsibilities:**
+- Takes user questions
+- Sends them to `/ask_question`
+- Displays LLM-generated answers in a chat-like view
+
+---
+
+## 🔁 Data Flow Summary
+
+### PDF Upload Flow:
+User → FileUpload Component → /upload_pdf API → PDFProcessor Init → /create_vector_store → UI Update
+
+shell
+Copy
+Edit
+
+### Question-Answer Flow:
+User → QuestionSection Component → /ask_question API → FAISS Search → LangChain + Ollama → Answer → UI Update
+
+yaml
+Copy
+Edit
+
+---
+
+## 🧰 Key Technologies Used
+
+### 🔙 Backend
+- **FastAPI:** High-performance API framework
+- **LangChain:** LLM workflow & retrieval-augmented generation
+- **Ollama:** Offline LLM engine (e.g., LLaMA 3.2)
+- **FAISS:** Efficient vector similarity search
+- **PyMuPDF (fitz):** PDF text extraction
+- **Uvicorn:** ASGI server for FastAPI
+
+### 🌐 Frontend
+- **ReactJS (Vite):** Fast modern web development
+- **Tailwindcss:** Modern Ui Experience
+- **Axios:** Promise-based HTTP client
+- **React Hooks (useState, useEffect):** Local state management
+
+---
+
+## 🧠 Usage Guide
+
+### 1. Upload a PDF
+- Go to the app's homepage.
+- Select and upload a PDF file.
+- Wait a few seconds while the model processes the content (especially when using an **offline Ollama model**).
+
+### 2. Ask Questions
+- Once processing is done, the question section will become available.
+- Enter your question in natural language (e.g., “What is the name of Pm of India?”).
+- Get an instant AI-generated answer!
+
+---
+
+## ⚙️ Setup Instructions
+
+### 📦 Backend Setup
+
+```bash
 cd backend
-Create a virtual environment and install dependencies:
-
-bash
-Copy
-Edit
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-Start the Ollama model (make sure Ollama is installed and configured):
 
-bash
-Copy
-Edit
-ollama run <model-name>  # e.g. ollama run llama2
-Run the FastAPI server:
+# Start Ollama with your model
+ollama run llama3  # or any supported model
 
-bash
-Copy
-Edit
+# Run FastAPI server
 uvicorn main:app --reload
-Frontend (ReactJS)
-Go to the frontend folder:
-
+💻 Frontend Setup
 bash
 Copy
 Edit
 cd frontend
-Install dependencies:
-
-bash
-Copy
-Edit
 npm install
-Start the frontend:
+npm run dev
+Make sure both frontend and backend are running and communicating correctly (check CORS settings and port numbers).
 
-bash
+🗂️ Folder Structure Overview
+css
 Copy
 Edit
-npm run dev
+AskPdf.ai/
+├── backend/
+│   ├── main.py
 
-
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   └── vite.config.js
+└── README.md
