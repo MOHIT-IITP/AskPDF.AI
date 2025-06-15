@@ -1,27 +1,23 @@
 import React from 'react';
 
 const Navbar = () => {
-    return (
-        <nav style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            padding: '1rem', 
-            background: '#222', 
-            color: '#fff' 
-        }}>
-            <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>AskPDF.AI</div>
-            <ul style={{ 
-                listStyle: 'none', 
-                display: 'flex', 
-                gap: '1rem', 
-                margin: 0, 
-                padding: 0 
-            }}>
-                <li><a href="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</a></li>
-            </ul>
-        </nav>
-    );
+  return (
+    <div className='flex justify-center items-center ' >
+      <nav className=" fixed mt-20 bg-black/40 px-10 py-4 rounded-full w-[40%] flex justify-between items-center text-white">
+        <div className="font-bold text-lg">AskPDF.AI</div>
+        <ul className="list-none flex gap-4 m-0 p-0">
+          <li className='flex gap-4'>
+            <a href="/" className=" border-r-2 px-4 text-white no-underline">
+              Home
+            </a>
+            <a href="/home" className="text-white no-underline">
+               App 
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  );
 };
 
 export default Navbar;
